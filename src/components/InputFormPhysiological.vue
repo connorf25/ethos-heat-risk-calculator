@@ -144,7 +144,7 @@ watch(
 watch(
   () => store.physiological.massKg,
   (kg) => {
-    if (kg !== undefined) {
+    if (store.physiological.isMassKg && kg !== undefined) {
       store.physiological.massLbs = Math.round(kg * 2.20462 * 10) / 10
     }
   },
@@ -154,7 +154,7 @@ watch(
 watch(
   () => store.physiological.massLbs,
   (lbs) => {
-    if (lbs !== undefined) {
+    if (!store.physiological.isMassKg && lbs !== undefined) {
       store.physiological.massKg = Math.round((lbs / 2.20462) * 10) / 10
     }
   },
