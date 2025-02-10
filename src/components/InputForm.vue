@@ -16,19 +16,29 @@
       <!-- Footer -->
       <template v-slot:navigation>
         <q-stepper-navigation>
-          <q-btn
-            v-if="step > 1"
-            flat
-            color="primary"
-            @click="$refs.stepper?.previous()"
-            label="Back"
-            class="q-ml-sm"
-          />
-          <q-btn
-            @click="$refs.stepper?.next()"
-            color="primary"
-            :label="step === 3 ? 'Finish' : 'Continue'"
-          />
+          <div class="row items-center q-pb-none q-pt-md">
+            <q-btn
+              v-if="step > 1"
+              flat
+              color="primary"
+              @click="$refs.stepper?.previous()"
+              label="Back"
+            />
+            <q-space />
+            <q-btn
+              v-if="step < 3"
+              class="q-mr-sm"
+              flat
+              color="primary"
+              @click="$refs.stepper?.next()"
+              label="skip"
+            />
+            <q-btn
+              @click="$refs.stepper?.next()"
+              color="primary"
+              :label="step === 3 ? 'Finish' : 'Continue'"
+            />
+          </div>
         </q-stepper-navigation>
       </template>
     </q-stepper>
