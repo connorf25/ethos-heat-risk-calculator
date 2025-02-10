@@ -1,6 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
 
-export const useCounterStore = defineStore('counter', {
+export const useInputParametersStore = defineStore('inputParameters', {
   state: () => ({
     physiological: {
       isFemale: undefined as undefined | boolean,
@@ -26,5 +26,5 @@ export const useCounterStore = defineStore('counter', {
 })
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useCounterStore, import.meta.hot))
+  import.meta.hot.accept(acceptHMRUpdate(useInputParametersStore, import.meta.hot))
 }
