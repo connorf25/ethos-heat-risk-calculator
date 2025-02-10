@@ -16,7 +16,7 @@ export const useInputParametersStore = defineStore('inputParameters', {
       massLbs: undefined as undefined | number,
     },
     environmental: {
-      address: '',
+      postcode: undefined as undefined | number,
     },
     other: {
       healthConditions: [] as string[],
