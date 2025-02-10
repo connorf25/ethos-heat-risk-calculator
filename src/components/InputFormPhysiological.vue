@@ -24,7 +24,7 @@
 
     <!-- Height Input -->
     <div class="row q-mb-md">
-      <div v-if="store.physiological.isHeightCm" class="col-10">
+      <div v-if="store.physiological.isHeightCm" class="col-10 q-pr-lg">
         <q-input
           v-model.number="store.physiological.heightCm"
           type="number"
@@ -38,7 +38,7 @@
         </q-input>
       </div>
 
-      <div v-else class="col-10 row">
+      <div v-else class="col-10 row q-pr-lg">
         <q-input
           v-model.number="store.physiological.heightFt"
           type="number"
@@ -77,7 +77,7 @@
 
     <!-- Mass Input -->
     <div class="q-mb-md row">
-      <div class="col-10">
+      <div class="col-10 q-pr-lg">
         <q-input
           v-model.number="store.physiological.massKg"
           v-if="store.physiological.isMassKg"
@@ -123,7 +123,7 @@ const store = useInputParametersStore()
 
 // Watch for changes in ft/in and update cm
 watch([() => store.physiological.heightFt, () => store.physiological.heightIn], ([ft, inches]) => {
-  if (ft !== undefined && inches !== undefined) {
+  if (!store.physiological.isHeightCm && ft !== undefined && inches !== undefined) {
     store.physiological.heightCm = Math.round((ft * 30.48 + inches * 2.54) * 10) / 10
   }
 })
@@ -132,7 +132,7 @@ watch([() => store.physiological.heightFt, () => store.physiological.heightIn], 
 watch(
   () => store.physiological.heightCm,
   (cm) => {
-    if (cm !== undefined) {
+    if (store.physiological.isHeightCm && cm !== undefined) {
       const totalInches = cm / 2.54
       store.physiological.heightFt = Math.floor(totalInches / 12)
       store.physiological.heightIn = Math.round((totalInches % 12) * 10) / 10
