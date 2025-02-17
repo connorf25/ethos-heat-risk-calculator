@@ -15,6 +15,19 @@ services:
       - API_URL=http://backend:5000
     depends_on:
       - backend
+    profiles: ["dev"]
+
+  frontend-prod:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "80:80"
+    environment:
+      - API_URL=http://backend:5000
+    depends_on:
+      - backend-prod
+    profiles: ["prod"]
 
   backend:
     build:
@@ -27,3 +40,16 @@ services:
     environment:
       - FLASK_ENV=development
       - FLASK_APP=app.py
+    profiles: ["dev"]
+
+  backend-prod:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_APP=app.py
+      - FLASK_DEBUG=0
+    profiles: ["prod"]
