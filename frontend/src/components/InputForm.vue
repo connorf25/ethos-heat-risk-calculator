@@ -1,15 +1,30 @@
 <template>
   <div>
     <q-stepper v-model="step" ref="stepper" color="primary" animated>
-      <q-step :name="1" title="Physiological Heat Risk" icon="settings" :done="step > 1">
+      <q-step
+        :name="stepValues.physiological"
+        title="Physiological Heat Risk"
+        icon="settings"
+        :done="inputParametersStore.isPhysiologicalComplete"
+      >
         <div class="text-h4 q-mb-lg">Physiological Heat Risk</div>
         <InputFormPhysiological />
       </q-step>
-      <q-step :name="2" title="Environmental Heat Risk" icon="settings" :done="step > 1">
+      <q-step
+        :name="stepValues.environmental"
+        title="Environmental Heat Risk"
+        icon="settings"
+        :done="inputParametersStore.isEnvironmentalComplete"
+      >
         <div class="text-h4 q-mb-lg">Environmental Heat Risk (Australia Only)</div>
         <InputFormEnvironmental />
       </q-step>
-      <q-step :name="3" title="Other Heat Risk" icon="settings" :done="step > 1">
+      <q-step
+        :name="stepValues.other"
+        title="Other Heat Risk"
+        icon="settings"
+        :done="inputParametersStore.isOtherComplete"
+      >
         <div class="text-h4 q-mb-lg">Other Heat Risk</div>
         <InputFormOther />
       </q-step>
@@ -26,7 +41,7 @@
             />
             <q-space />
             <q-btn
-              v-if="step < 3"
+              v-if="step < maxStepValue"
               class="q-mr-sm"
               flat
               color="primary"
@@ -34,9 +49,10 @@
               label="skip"
             />
             <q-btn
-              @click="$refs.stepper?.next()"
+              @click="step === maxStepValue ? $router.push('/info') : $refs.stepper?.next()"
               color="primary"
-              :label="step === 3 ? 'Finish' : 'Continue'"
+              :disable="!isCurrentStepComplete"
+              :label="step === maxStepValue ? 'Finish' : 'Continue'"
             />
           </div>
         </q-stepper-navigation>
@@ -49,9 +65,35 @@
 import InputFormPhysiological from 'src/components/InputFormPhysiological.vue'
 import InputFormEnvironmental from 'src/components/InputFormEnvironmental.vue'
 import InputFormOther from 'src/components/InputFormOther.vue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { QStepper } from 'quasar'
+import { useInputParametersStore } from 'src/stores/inputParameters'
+
+const inputParametersStore = useInputParametersStore()
 
 const step = ref(1)
 const stepper = ref<QStepper | null>(null)
+
+const stepValues = {
+  physiological: 1,
+  environmental: 2,
+  other: 3,
+}
+
+const maxStepValue = Math.max(...Object.values(stepValues))
+
+const isCurrentStepComplete = computed((): boolean => {
+  if (step.value === maxStepValue) {
+    // Are we on the last page?
+    return inputParametersStore.isAnyComplete
+  } else if (step.value === stepValues.physiological) {
+    return inputParametersStore.isPhysiologicalComplete
+  } else if (step.value === stepValues.environmental) {
+    return inputParametersStore.isEnvironmentalComplete
+  } else if (step.value === stepValues.other) {
+    return true
+  }
+  console.error('This point should not be reached, check stepValues, current step:', step.value)
+  return true
+})
 </script>
