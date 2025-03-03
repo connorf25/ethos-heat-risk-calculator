@@ -1,14 +1,21 @@
 # frontend/Dockerfile
-FROM node:18
+FROM node:18-slim
 
 WORKDIR /app
 
-# Install global Quasar CLI
-RUN npm install -g @quasar/cli
+COPY package.json yarn.lock ./
 
-COPY package*.json ./
-# Disable postinstall scripts temporarily
-RUN npm install --ignore-scripts
+# Install dependencies using Yarn (prefer yarn install over yarn)
+RUN yarn install --ignore-scripts --frozen-lockfile --production=false
+#   --ignore-scripts:  Required to prevent running `quasar prepare` before quasar project is ready
+#  --frozen-lockfile:  Ensures that the exact versions specified in yarn.lock are installed.  Crucial for consistent builds. Fails if yarn.lock is out of sync.
+# --production=false: Install devDependencies, we need those for building and running quasar dev
+
+# Install global Quasar CLI *after* installing project dependencies, using yarn
+RUN yarn global add @quasar/cli
+# using yarn to add the cli means it will go into /usr/local/share/.config/yarn/global/node_modules/.bin/quasar
+# therefore we need to add the path to the PATH variable
+ENV PATH="/usr/local/share/.config/yarn/global/node_modules/.bin:${PATH}"
 
 # Now copy the rest of the app
 COPY . .
@@ -17,4 +24,4 @@ COPY . .
 RUN quasar prepare
 
 EXPOSE 8080
-CMD ["quasar", "dev"]
+CMD ["yarn", "dev"]
