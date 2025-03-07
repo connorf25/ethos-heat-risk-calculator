@@ -1,6 +1,7 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
 
 export const useInputParametersStore = defineStore('inputParameters', {
+  persist: true,
   state: () => ({
     physiological: {
       isFemale: undefined as undefined | boolean,
