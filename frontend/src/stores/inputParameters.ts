@@ -47,6 +47,12 @@ export const useInputParametersStore = defineStore('inputParameters', {
     isAnyComplete(): boolean {
       return this.isPhysiologicalComplete || this.isEnvironmentalComplete || this.isOtherComplete
     },
+    numberOfHealthConditions(state): number {
+      return state.other.healthConditions.length
+    },
+    numberOfMedications(state): number {
+      return state.other.medications.length
+    },
   },
 })
 
