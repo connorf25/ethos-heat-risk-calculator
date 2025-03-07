@@ -12,9 +12,12 @@
     higher than what is indicated below.`
         : ''
     }}
+
     <div class="text-h4">Physiological Heat Risk</div>
     <div>Calculating your physiological heat risk...</div>
     <q-spinner size="xl" />
+
+    <!-- TODO: Only show this when loading, and show environmental info once request has been processed on python server -->
     <div class="text-h4">Environmental Heat Risk</div>
     <div>Calculating your environmental heat risk...</div>
     <q-spinner size="xl" />

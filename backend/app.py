@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from werkzeug.exceptions import BadRequest, InternalServerError
 import geopandas as gpd
 import osmnx as ox
@@ -9,6 +10,7 @@ import os
 
 # Configuration
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 app.config.from_mapping(
     ENV=os.environ.get('FLASK_ENV', 'production'),
     DEBUG=os.environ.get('FLASK_DEBUG', '0').lower() in ['1', 'true'],

@@ -49,7 +49,7 @@
               label="skip"
             />
             <q-btn
-              @click="step === maxStepValue ? $router.push('/info') : $refs.stepper?.next()"
+              @click="step === maxStepValue ? submitForm() : $refs.stepper?.next()"
               color="primary"
               :disable="!isCurrentStepComplete"
               :label="step === maxStepValue ? 'Finish' : 'Continue'"
@@ -68,8 +68,12 @@ import InputFormOther from 'src/components/InputFormOther.vue'
 import { computed, ref } from 'vue'
 import { QStepper } from 'quasar'
 import { useInputParametersStore } from 'src/stores/inputParameters'
+import { useOutputDataStore } from 'src/stores/outputData'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const inputParametersStore = useInputParametersStore()
+const outputDataStore = useOutputDataStore()
 
 const step = ref(1)
 const stepper = ref<QStepper | null>(null)
@@ -96,4 +100,12 @@ const isCurrentStepComplete = computed((): boolean => {
   console.error('This point should not be reached, check stepValues, current step:', step.value)
   return true
 })
+
+const submitForm = async () => {
+  const userPostcode = inputParametersStore.$state.environmental.postcode
+  await router.push('/info')
+  if (userPostcode) {
+    await outputDataStore.makePythonServerRequest(userPostcode)
+  }
+}
 </script>
