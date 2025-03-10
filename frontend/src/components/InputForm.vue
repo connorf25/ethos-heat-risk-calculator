@@ -62,12 +62,10 @@ import InputFormOther from 'src/components/InputFormOther.vue'
 import { computed, ref } from 'vue'
 import { QStepper } from 'quasar'
 import { useInputParametersStore } from 'src/stores/inputParameters'
-import { useOutputDataStore } from 'src/stores/outputData'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const inputParametersStore = useInputParametersStore()
-const outputDataStore = useOutputDataStore()
 
 const step = ref(1)
 const stepper = ref<QStepper | null>(null)
@@ -96,10 +94,6 @@ const isCurrentStepComplete = computed((): boolean => {
 })
 
 const submitForm = async () => {
-  const userPostcode = inputParametersStore.$state.environmental.postcode
   await router.push('/info')
-  if (userPostcode) {
-    await outputDataStore.makePythonServerRequest(userPostcode)
-  }
 }
 </script>
