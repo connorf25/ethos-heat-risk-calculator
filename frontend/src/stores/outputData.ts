@@ -1,16 +1,40 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
 import { api } from 'src/boot/axios'
 import { AxiosError } from 'axios'
+import { TemperaturePredictor, type BiophysicalFeatures } from 'src/helpers/temperaturePrediction'
 
 export const useOutputDataStore = defineStore('outputData', {
   persist: true,
   state: () => ({
+    // Environmental
     postcode: undefined as undefined | number,
     greenSpacePercentage: undefined as undefined | number,
     greenSpaceArea: undefined as undefined | number,
     totalArea: undefined as undefined | number,
+    // Physiological
+    humidityValues: Array.from({ length: 11 }, (_, i) => i * 10).reverse(), // [100, 90, ..., 0]
+    temperatureValues: Array.from({ length: 11 }, (_, i) => i * 2 + 23), // [23, 25, ..., 45]
+    temperatureGrid: undefined as undefined | number[][],
   }),
   actions: {
+    calculateRectalTemperatureGrid(biophysicalFeatures: BiophysicalFeatures) {
+      // TODO: Calculate a 11x11 grid showing the end rectal temperature in temperature range 23-45C and humidity range 0-100%
+      const temperaturePredictor = new TemperaturePredictor(biophysicalFeatures)
+      const totalSteps = this.humidityValues.length * this.temperatureValues.length
+      let currentStep = 0
+      const rows = []
+      for (const humidity of this.humidityValues) {
+        const row = []
+        for (const ambientTemp of this.temperatureValues) {
+          currentStep++
+          console.log('Progress:', (currentStep / totalSteps) * 100)
+          const { rectalTemp } = temperaturePredictor.predict({ humidity, ambientTemp })
+          row.push(rectalTemp)
+        }
+        rows.push(row)
+      }
+      this.temperatureGrid = rows
+    },
     async makePythonServerRequest(postcode: number) {
       try {
         // Construct the URL with the postcode as a query parameter.

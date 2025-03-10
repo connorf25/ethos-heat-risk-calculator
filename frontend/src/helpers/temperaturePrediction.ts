@@ -3,6 +3,18 @@ export enum Sex {
   FEMALE = 1,
 }
 
+export interface BiophysicalFeatures {
+  sex: Sex // 0 = male, 1 = female
+  age: number // years
+  height: number // cm
+  mass: number // kg
+}
+
+export interface EnvironmentalFeatures {
+  ambientTemp: number // °C
+  humidity: number // %RH
+}
+
 type COEFFICIENT_ARRAY = [number, number, number, number, number, number, number, number]
 
 interface PredictionProgress {
@@ -10,16 +22,8 @@ interface PredictionProgress {
   totalSteps: number
 }
 
-interface StaticFeatures {
-  sex: Sex // 0 = male, 1 = female
-  age: number // years
-  height: number // cm
-  mass: number // kg
-  ambientTemp: number // °C
-  humidity: number // %RH
-}
-
 export class TemperaturePredictor {
+  private biophysicalFeatures = undefined as undefined | BiophysicalFeatures
   // TODO: Placeholder values - replace with values trained on whole dataset
   private treCoeffs: COEFFICIENT_ARRAY = [
     1.6261586852849347e-4, 7.3681421437795942e-4, -4.3916987857211637e-4, 4.6532701146677997e-4,
@@ -32,18 +36,31 @@ export class TemperaturePredictor {
   ]
   private mtskIntercept = 4.3563287283298391e-2
 
+  constructor(biophysicalFeatures: BiophysicalFeatures) {
+    this.biophysicalFeatures = biophysicalFeatures
+  }
+
   predict(
-    staticFeatures: StaticFeatures,
+    environmentalFeatures: EnvironmentalFeatures,
     progressCallback?: (progress: PredictionProgress) => void,
   ): { rectalTemp: number; skinTemp: number } {
+    // Check to see class is correctly initialized
+    if (!this.biophysicalFeatures) {
+      throw new Error(
+        'this.biophysicalFeatures, not defined in class, please initialize in constructor:',
+        this.biophysicalFeatures,
+      )
+    }
     // Precompute static components
     const staticTre = this.calculateStaticComponent(
-      staticFeatures,
+      environmentalFeatures,
+      this.biophysicalFeatures,
       this.treCoeffs,
       this.treIntercept,
     )
     const staticMtsk = this.calculateStaticComponent(
-      staticFeatures,
+      environmentalFeatures,
+      this.biophysicalFeatures,
       this.mtskCoeffs,
       this.mtskIntercept,
     )
@@ -80,17 +97,18 @@ export class TemperaturePredictor {
   }
 
   private calculateStaticComponent(
-    features: StaticFeatures,
+    environmentalFeatures: EnvironmentalFeatures,
+    biophysicalFeatures: BiophysicalFeatures,
     coefficients: COEFFICIENT_ARRAY,
     intercept: number,
   ): number {
     return (
-      coefficients[0] * features.sex +
-      coefficients[1] * features.age +
-      coefficients[2] * features.height +
-      coefficients[3] * features.mass +
-      coefficients[4] * features.ambientTemp +
-      coefficients[5] * features.humidity +
+      coefficients[0] * biophysicalFeatures.sex +
+      coefficients[1] * biophysicalFeatures.age +
+      coefficients[2] * biophysicalFeatures.height +
+      coefficients[3] * biophysicalFeatures.mass +
+      coefficients[4] * environmentalFeatures.ambientTemp +
+      coefficients[5] * environmentalFeatures.humidity +
       intercept
     )
   }
