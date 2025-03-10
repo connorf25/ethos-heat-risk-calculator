@@ -32,24 +32,18 @@
       <template v-slot:navigation>
         <q-stepper-navigation>
           <div class="row items-center q-pb-none q-pt-md">
-            <q-btn
-              v-if="step > 1"
-              flat
-              color="primary"
-              @click="$refs.stepper?.previous()"
-              label="Back"
-            />
+            <q-btn v-if="step > 1" flat color="primary" @click="stepper?.previous()" label="Back" />
             <q-space />
             <q-btn
               v-if="step < maxStepValue"
               class="q-mr-sm"
               flat
               color="primary"
-              @click="$refs.stepper?.next()"
+              @click="stepper?.next()"
               label="skip"
             />
             <q-btn
-              @click="step === maxStepValue ? submitForm() : $refs.stepper?.next()"
+              @click="step === maxStepValue ? submitForm() : stepper?.next()"
               color="primary"
               :disable="!isCurrentStepComplete"
               :label="step === maxStepValue ? 'Finish' : 'Continue'"
