@@ -31,11 +31,11 @@ export const useOutputDataStore = defineStore('outputData', {
         const row = []
         for (const ambientTemp of temperatureValues) {
           this.currentStep++
-          const { rectalTemp } = temperaturePredictor.calculateTemperatureAtConditions({
+          const { rectalTempDelta } = temperaturePredictor.calculateTemperatureAtConditions({
             humidity,
             ambientTemp,
           })
-          row.push(rectalTemp)
+          row.push(rectalTempDelta)
 
           // Yield to the main thread every 10 calculations
           if (this.currentStep % 10 === 9) {

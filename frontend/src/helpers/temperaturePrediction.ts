@@ -76,7 +76,10 @@ export class TemperaturePredictor {
       baselineTemp.skinTemp,
       progressCallback,
     )
-    return finalTemp
+    return {
+      rectalTempDelta: finalTemp.rectalTemp - baselineTemp.rectalTemp,
+      skinTempDelta: finalTemp.skinTemp - baselineTemp.skinTemp,
+    }
   }
 
   // Predict temperature for a given
