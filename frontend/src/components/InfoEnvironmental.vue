@@ -1,34 +1,36 @@
 <template>
-  <div class="text-h4">Environmental Heat Risk</div>
-  <div v-if="isLoading">Calculating your environmental heat risk...</div>
-  <q-spinner v-if="isLoading" size="xl" />
+  <div>
+    <div class="text-h4">Environmental Heat Risk</div>
+    <div v-if="isLoading">Calculating your environmental heat risk...</div>
+    <q-spinner v-if="isLoading" size="xl" />
 
-  <div v-else-if="hasError" class="text-negative">
-    There was an error fetching environmental data. Please try again.
-  </div>
-
-  <div v-else-if="outputDataStore.postcode">
-    <div class="q-mt-md">
-      <p>
-        Green space analysis for postcode: <strong>{{ outputDataStore.postcode }}</strong>
-      </p>
-      <p>
-        Green space percentage:
-        <strong>{{ outputDataStore.greenSpacePercentage?.toFixed(2) }}%</strong>
-      </p>
-      <p>
-        Green space area: <strong>{{ formatArea(outputDataStore.greenSpaceArea) }}</strong>
-      </p>
-      <p>
-        Total area: <strong>{{ formatArea(outputDataStore.totalArea) }}</strong>
-      </p>
+    <div v-else-if="hasError" class="text-negative">
+      There was an error fetching environmental data. Please try again.
     </div>
-    <div class="q-mt-md">
-      <p>
-        Areas with higher green space percentages generally have lower heat risks during extreme
-        weather.
-        {{ getGreenSpaceMessage() }}
-      </p>
+
+    <div v-else-if="outputDataStore.postcode">
+      <div class="q-mt-md">
+        <p>
+          Green space analysis for postcode: <strong>{{ outputDataStore.postcode }}</strong>
+        </p>
+        <p>
+          Green space percentage:
+          <strong>{{ outputDataStore.greenSpacePercentage?.toFixed(2) }}%</strong>
+        </p>
+        <p>
+          Green space area: <strong>{{ formatArea(outputDataStore.greenSpaceArea) }}</strong>
+        </p>
+        <p>
+          Total area: <strong>{{ formatArea(outputDataStore.totalArea) }}</strong>
+        </p>
+      </div>
+      <div class="q-mt-md">
+        <p>
+          Areas with higher green space percentages generally have lower heat risks during extreme
+          weather.
+          {{ getGreenSpaceMessage() }}
+        </p>
+      </div>
     </div>
   </div>
 </template>

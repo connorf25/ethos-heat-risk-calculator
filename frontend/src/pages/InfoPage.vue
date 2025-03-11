@@ -1,8 +1,10 @@
 <template>
   <q-page class="q-ma-lg">
-    <InfoOther />
-    <InfoPhysiological />
-    <InfoEnvironmental />
+    <q-card class="q-pa-lg">
+      <InfoOther class="q-mb-lg" />
+      <InfoPhysiological class="q-my-lg" />
+      <InfoEnvironmental class="q-mt-lg" />
+    </q-card>
   </q-page>
 </template>
 
