@@ -3,8 +3,8 @@ import { api } from 'src/boot/axios'
 import { AxiosError } from 'axios'
 import { TemperaturePredictor, type BiophysicalFeatures } from 'src/helpers/temperaturePrediction'
 
-const humidityValues = Array.from({ length: 11 }, (_, i) => i * 10).reverse() // [100, 90, ..., 0]
-const temperatureValues = Array.from({ length: 11 }, (_, i) => i * 2 + 23) // [23, 25, ..., 45]
+export const humidityValues = Array.from({ length: 11 }, (_, i) => i * 10) // [0, 10, ..., 100]
+export const temperatureValues = Array.from({ length: 12 }, (_, i) => i * 2 + 23) // [23, 25, ..., 45]
 
 export const useOutputDataStore = defineStore('outputData', {
   persist: true,

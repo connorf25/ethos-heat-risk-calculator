@@ -12,7 +12,7 @@
       There was an error fetching physiological data. Please try again.
     </div>
     <div v-else-if="outputDataStore.temperatureGrid">
-      {{ outputDataStore.temperatureGrid }}
+      <InfoPhysiologicalHeatMap />
     </div>
   </div>
 </template>
@@ -22,6 +22,7 @@ import { Sex } from 'src/helpers/temperaturePrediction'
 import { useInputParametersStore } from 'src/stores/inputParameters'
 import { useOutputDataStore } from 'src/stores/outputData'
 import { ref, onMounted } from 'vue'
+import InfoPhysiologicalHeatMap from './InfoPhysiologicalHeatMap.vue'
 
 const inputParametersStore = useInputParametersStore()
 const outputDataStore = useOutputDataStore()
