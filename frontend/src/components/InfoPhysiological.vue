@@ -3,7 +3,10 @@
     <div class="text-h4 q-mb-sm">Physiological Heat Risk</div>
     <div v-if="isLoading">
       <div>Calculating your physiological heat risk...</div>
-      <q-spinner size="xl" :value="outputDataStore.currentStep / outputDataStore.totalSteps" />
+      <q-linear-progress
+        size="xl"
+        :value="outputDataStore.currentStep / outputDataStore.totalSteps"
+      />
     </div>
     <div v-else-if="hasError" class="text-negative">
       There was an error fetching physiological data. Please try again.
@@ -26,7 +29,7 @@ const outputDataStore = useOutputDataStore()
 const isLoading = ref(true)
 const hasError = ref(false)
 
-onMounted(() => {
+onMounted(async () => {
   if (
     inputParametersStore.physiological.isFemale === undefined ||
     inputParametersStore.physiological.age === undefined ||
@@ -47,7 +50,7 @@ onMounted(() => {
   hasError.value = false
 
   try {
-    outputDataStore.calculateRectalTemperatureGrid(biophysicalFeatures)
+    await outputDataStore.calculateRectalTemperatureGrid(biophysicalFeatures)
   } catch (error) {
     console.error('Failed to calculate physiological data:', error)
     hasError.value = true

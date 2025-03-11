@@ -3,6 +3,9 @@ import { api } from 'src/boot/axios'
 import { AxiosError } from 'axios'
 import { TemperaturePredictor, type BiophysicalFeatures } from 'src/helpers/temperaturePrediction'
 
+const humidityValues = Array.from({ length: 11 }, (_, i) => i * 10).reverse() // [100, 90, ..., 0]
+const temperatureValues = Array.from({ length: 11 }, (_, i) => i * 2 + 23) // [23, 25, ..., 45]
+
 export const useOutputDataStore = defineStore('outputData', {
   persist: true,
   state: () => ({
@@ -12,30 +15,32 @@ export const useOutputDataStore = defineStore('outputData', {
     greenSpaceArea: undefined as undefined | number,
     totalArea: undefined as undefined | number,
     // Physiological
-    humidityValues: Array.from({ length: 11 }, (_, i) => i * 10).reverse(), // [100, 90, ..., 0]
-    temperatureValues: Array.from({ length: 11 }, (_, i) => i * 2 + 23), // [23, 25, ..., 45]
     currentStep: 0,
     temperatureGrid: undefined as undefined | number[][],
   }),
   getters: {
-    totalSteps: (state) => state.humidityValues.length * state.temperatureValues.length,
+    totalSteps: () => humidityValues.length * temperatureValues.length,
   },
   actions: {
-    calculateRectalTemperatureGrid(biophysicalFeatures: BiophysicalFeatures) {
-      // TODO: Calculate a 11x11 grid showing the end rectal temperature in temperature range 23-45C and humidity range 0-100%
+    // Calculate a 11x11 grid showing the end rectal temperature in temperature range 23-45C and humidity range 0-100%
+    async calculateRectalTemperatureGrid(biophysicalFeatures: BiophysicalFeatures) {
       const temperaturePredictor = new TemperaturePredictor(biophysicalFeatures)
       this.currentStep = 0
       const rows = []
-      for (const humidity of this.humidityValues) {
+      for (const humidity of humidityValues) {
         const row = []
-        for (const ambientTemp of this.temperatureValues) {
+        for (const ambientTemp of temperatureValues) {
           this.currentStep++
-          console.log('Progress:', (this.currentStep / this.totalSteps) * 100)
           const { rectalTemp } = temperaturePredictor.calculateTemperatureAtConditions({
             humidity,
             ambientTemp,
           })
           row.push(rectalTemp)
+
+          // Yield to the main thread every 10 calculations
+          if (this.currentStep % 10 === 9) {
+            await new Promise((resolve) => setTimeout(resolve, 0))
+          }
         }
         rows.push(row)
       }
