@@ -14,21 +14,27 @@ export const useOutputDataStore = defineStore('outputData', {
     // Physiological
     humidityValues: Array.from({ length: 11 }, (_, i) => i * 10).reverse(), // [100, 90, ..., 0]
     temperatureValues: Array.from({ length: 11 }, (_, i) => i * 2 + 23), // [23, 25, ..., 45]
+    currentStep: 0,
     temperatureGrid: undefined as undefined | number[][],
   }),
+  getters: {
+    totalSteps: (state) => state.humidityValues.length * state.temperatureValues.length,
+  },
   actions: {
     calculateRectalTemperatureGrid(biophysicalFeatures: BiophysicalFeatures) {
       // TODO: Calculate a 11x11 grid showing the end rectal temperature in temperature range 23-45C and humidity range 0-100%
       const temperaturePredictor = new TemperaturePredictor(biophysicalFeatures)
-      const totalSteps = this.humidityValues.length * this.temperatureValues.length
-      let currentStep = 0
+      this.currentStep = 0
       const rows = []
       for (const humidity of this.humidityValues) {
         const row = []
         for (const ambientTemp of this.temperatureValues) {
-          currentStep++
-          console.log('Progress:', (currentStep / totalSteps) * 100)
-          const { rectalTemp } = temperaturePredictor.predict({ humidity, ambientTemp })
+          this.currentStep++
+          console.log('Progress:', (this.currentStep / this.totalSteps) * 100)
+          const { rectalTemp } = temperaturePredictor.calculateTemperatureAtConditions({
+            humidity,
+            ambientTemp,
+          })
           row.push(rectalTemp)
         }
         rows.push(row)

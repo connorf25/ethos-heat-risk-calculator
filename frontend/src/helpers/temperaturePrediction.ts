@@ -6,8 +6,8 @@ export enum Sex {
 export interface BiophysicalFeatures {
   sex: Sex // 0 = male, 1 = female
   age: number // years
-  height: number // cm
-  mass: number // kg
+  heightCm: number // cm
+  massKg: number // kg
 }
 
 export interface EnvironmentalFeatures {
@@ -40,8 +40,29 @@ export class TemperaturePredictor {
     this.biophysicalFeatures = biophysicalFeatures
   }
 
+  calculateTemperatureAtConditions(
+    environmentalFeatures: EnvironmentalFeatures,
+    progressCallback?: (progress: PredictionProgress) => void,
+  ) {
+    // Calculate baseline temperature
+    const baselineEnvironmentalFeatures = { ambientTemp: 23, humidity: 50 } // Air con room
+    const baselineTemp = this.predict(baselineEnvironmentalFeatures, 120, 37, 32, progressCallback)
+    // Calculate rise/fall in temperature
+    const finalTemp = this.predict(
+      environmentalFeatures,
+      540,
+      baselineTemp.rectalTemp,
+      baselineTemp.skinTemp,
+      progressCallback,
+    )
+    return finalTemp
+  }
+
   predict(
     environmentalFeatures: EnvironmentalFeatures,
+    durationMinutes: number,
+    initialTre = 37,
+    initialMtsk = 32,
     progressCallback?: (progress: PredictionProgress) => void,
   ): { rectalTemp: number; skinTemp: number } {
     // Check to see class is correctly initialized
@@ -66,11 +87,11 @@ export class TemperaturePredictor {
     )
 
     // Initialize temperatures
-    let prevTre = 37.0 // Initial rectal temp
-    let prevMtsk = 32.0 // Initial skin temp
+    let prevTre = initialTre // Initial rectal temp
+    let prevMtsk = initialMtsk // Initial skin temp
 
     // Run simulation
-    const totalSteps = 540
+    const totalSteps = durationMinutes
     for (let step = 0; step < totalSteps; step++) {
       // Calculate new temperatures
       const newTre = staticTre + this.treCoeffs[6] * prevTre + this.treCoeffs[7] * prevMtsk
@@ -105,8 +126,8 @@ export class TemperaturePredictor {
     return (
       coefficients[0] * biophysicalFeatures.sex +
       coefficients[1] * biophysicalFeatures.age +
-      coefficients[2] * biophysicalFeatures.height +
-      coefficients[3] * biophysicalFeatures.mass +
+      coefficients[2] * biophysicalFeatures.heightCm +
+      coefficients[3] * biophysicalFeatures.massKg +
       coefficients[4] * environmentalFeatures.ambientTemp +
       coefficients[5] * environmentalFeatures.humidity +
       intercept
