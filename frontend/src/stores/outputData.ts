@@ -16,7 +16,7 @@ export const useOutputDataStore = defineStore('outputData', {
     totalArea: undefined as undefined | number,
     // Physiological
     currentStep: 0,
-    temperatureGrid: undefined as undefined | number[][],
+    temperatureGrid: undefined as undefined | (number | null)[][],
   }),
   getters: {
     totalSteps: () => humidityValues.length * temperatureValues.length,

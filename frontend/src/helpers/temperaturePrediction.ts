@@ -43,9 +43,22 @@ export class TemperaturePredictor {
   ]
   private mtskIntercept = 4.3563287283298391e-2
 
+  // Define the vapour pressure limit (in kPa)
+  // Above this limit, evaporative cooling is significantly impaired, and model predictions may be less reliable.
+  private readonly MAX_VAPOUR_PRESSURE_KPA = 6
+
   // Constructor
   constructor(biophysicalFeatures: BiophysicalFeatures) {
     this.biophysicalFeatures = biophysicalFeatures
+  }
+
+  private _calculateVapourPressureKpa(tempC: number, humidityPercent: number): number {
+    // Using the Magnus-Tetens approximation for saturated vapour pressure (SVP)
+    // SVP(T) = 0.61094 * exp((17.625 * T) / (T + 243.04))  (Result in kPa)
+    const svp = 0.61094 * Math.exp((17.625 * tempC) / (tempC + 243.04))
+    // Actual Vapour Pressure (AVP) = SVP * Relative Humidity
+    const avp = svp * (humidityPercent / 100)
+    return avp
   }
 
   // Calculate final temperature given environmental conditions
@@ -53,6 +66,18 @@ export class TemperaturePredictor {
     environmentalFeatures: EnvironmentalFeatures,
     progressCallback?: (progress: PredictionProgress) => void,
   ) {
+    // Vapour pressure check
+    const actualVapourPressure = this._calculateVapourPressureKpa(
+      environmentalFeatures.ambientTemp,
+      environmentalFeatures.humidity,
+    )
+    if (actualVapourPressure >= this.MAX_VAPOUR_PRESSURE_KPA) {
+      return {
+        rectalTempDelta: null,
+        skinTempDelta: null,
+      }
+    }
+
     // Initial simulation (air conditioned room)
     const baselineEnvironmentalFeatures = { ambientTemp: 23, humidity: 50 }
     const baselineSimulationTime = 120
