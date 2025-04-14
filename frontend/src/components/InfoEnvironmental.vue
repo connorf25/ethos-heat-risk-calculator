@@ -32,6 +32,15 @@
         </p>
       </div>
     </div>
+
+    <BaseGreenspaceMap
+      :postcode-geometry="outputDataStore.postcodeGeometry"
+      :greenspace-features="outputDataStore.greenspaceFeatures"
+      :is-loading="outputDataStore.isLoading"
+      :error-loading="!!outputDataStore.error"
+      map-height="60vh"
+      class="q-mt-md"
+    />
   </div>
 </template>
 
@@ -39,6 +48,7 @@
 import { useInputParametersStore } from 'src/stores/inputParameters'
 import { useOutputDataStore } from 'src/stores/outputData'
 import { ref, onMounted } from 'vue'
+import BaseGreenspaceMap from 'src/components/BaseGreenspaceMap.vue'
 
 const inputParametersStore = useInputParametersStore()
 const outputDataStore = useOutputDataStore()
