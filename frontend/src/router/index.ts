@@ -38,6 +38,7 @@ export default defineRouter(function (/* { store, ssrContext } */) {
 
   Router.beforeEach((to, from, next) => {
     if (to.path !== '/' && !inputParametersStore.isAnyComplete) {
+      console.warn('Missing initialization data! Redirecting home...')
       next('/')
     } else {
       next()

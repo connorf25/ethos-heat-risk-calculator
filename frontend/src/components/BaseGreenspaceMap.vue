@@ -136,10 +136,10 @@ const invalidateMapSize = () => {
 }
 
 const fitMapToBounds = () => {
-  // Ensure map instance, postcode layer ref, AND the underlying Leaflet layer object exist
+  console.log('Fitting map to bounds...')
   if (
     mapInstance.value?.leafletObject &&
-    postcodeLayer.value?.leafletObject && // Check if the vue-leaflet component has created its layer
+    postcodeLayer.value?.leafletObject &&
     props.postcodeGeometry
   ) {
     const leafletMap = mapInstance.value.leafletObject
@@ -162,8 +162,6 @@ const fitMapToBounds = () => {
       }
     } else {
       console.warn('postcodeLayer.leafletObject does not have getBounds yet. Retrying soon...')
-      // Optional: Retry after a short delay if bounds weren't ready
-      // setTimeout(fitMapToBounds, 100); // Be cautious with recursive setTimeout
     }
   } else if (mapInstance.value?.leafletObject) {
     // Handle case where postcode geometry is removed
@@ -182,8 +180,6 @@ const onMapReady = () => {
   // Invalidate size once the map object is ready, in case container size was calculated late
   void nextTick(() => {
     invalidateMapSize()
-    // We now primarily rely on the watcher to call fitMapToBounds
-    // If postcodeGeometry is already present when map becomes ready, the watcher will handle it.
   })
 }
 
@@ -216,18 +212,13 @@ watch(
 watch(
   () => props.isLoading,
   (loading, prevLoading) => {
-    // When loading finishes and the map *was* previously loading
     if (!loading && prevLoading) {
       console.log('Loading finished.')
       void nextTick(() => {
         console.log('Invalidating map size after loading finished.')
         invalidateMapSize()
-        // If postcode data is already loaded, the geometry watcher should handle fitting bounds.
-        // If postcode data arrived *while* loading, the watcher might have fired already,
-        // but the map wasn't visible. We might need to trigger fitMapToBounds here IF needed.
         if (props.postcodeGeometry && mapReady) {
           console.log('Re-attempting fitMapToBounds after loading finished (if needed).')
-          // Use a timeout to ensure invalidateSize has taken effect
           setTimeout(fitMapToBounds, 50)
         }
       })
@@ -245,7 +236,6 @@ watch(
 onMounted(() => {
   if (mapContainer.value) {
     resizeObserver = new ResizeObserver(() => {
-      // Debounce or throttle this if it fires too rapidly
       console.log('Map container resized, invalidating map size.')
       invalidateMapSize()
     })

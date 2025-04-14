@@ -118,7 +118,11 @@ def calculate_greenspace_data(postcode):
         postcode_geojson_geometry = postcode_geometry_4326.__geo_interface__
 
         # Fetch greenspaces using the WGS84 geometry
-        tags = {'leisure': ['park', 'garden'], 'landuse': ['grass', 'forest']}
+        tags = {
+            'leisure': ['park', 'garden'],
+            'landuse': ['grass', 'forest'],
+            'natural': ['wood']
+        }
         try:
             # Use the unary_union in case the shapefile had multipart polygons for a postcode
             boundary_polygon = postcode_area_4326.geometry.unary_union
@@ -132,6 +136,8 @@ def calculate_greenspace_data(postcode):
              # or just use an empty one for geometry extraction.
              greenspaces_gdf_4326 = gpd.GeoDataFrame([], columns=['osmid', 'geometry'], crs='epsg:4326')
 
+        # Clip areas outside of the postcode
+        greenspaces_gdf_4326 = gpd.clip(greenspaces_gdf_4326, postcode_area_4326)
 
         # Convert greenspace features to GeoJSON FeatureCollection format
         greenspace_geojson_features = greenspaces_gdf_4326.__geo_interface__
