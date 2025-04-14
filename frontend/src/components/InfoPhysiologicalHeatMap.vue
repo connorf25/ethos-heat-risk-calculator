@@ -72,7 +72,7 @@ const heatmapOption = computed(() => {
       },
     },
     grid: {
-      top: '10%',
+      top: '0%',
       left: '3%',
       right: '4%',
       bottom: '15%',
