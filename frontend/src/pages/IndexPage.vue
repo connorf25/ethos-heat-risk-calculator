@@ -1,6 +1,8 @@
 <template>
-  <q-page class="row items-center justify-evenly">
-    <InputForm />
+  <q-page>
+    <div class="q-mt-lg" style="max-width: 700px; margin-left: auto; margin-right: auto">
+      <InputForm />
+    </div>
   </q-page>
 </template>
 

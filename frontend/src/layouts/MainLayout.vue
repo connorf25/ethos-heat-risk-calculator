@@ -17,6 +17,7 @@
     </q-header>
 
     <q-page-container>
+      <BaseDisclaimer />
       <router-view />
     </q-page-container>
   </q-layout>
@@ -43,6 +44,7 @@
 import { ref } from 'vue'
 import { useInputParametersStore } from 'src/stores/inputParameters'
 import { useRouter } from 'vue-router'
+import BaseDisclaimer from 'src/components/BaseDisclaimer.vue'
 
 const router = useRouter()
 const inputParametersStore = useInputParametersStore()
