@@ -42,7 +42,7 @@ const heatmapOption = computed(() => {
   return {
     tooltip: {
       position: 'top',
-      formatter: (params: any) => {
+      formatter: (params: { data: [number, number, number] }) => {
         const temp = temperatureValues[params.data[0]]
         const humidity = humidityValues[params.data[1]]
         const value = params.data[2].toFixed(2)
@@ -101,7 +101,7 @@ const heatmapOption = computed(() => {
         data: data,
         label: {
           show: true,
-          formatter: (params: any) => params.data[2].toFixed(1),
+          formatter: (params: { data: [number, number, number] }) => params.data[2].toFixed(1),
         },
         emphasis: {
           itemStyle: {
