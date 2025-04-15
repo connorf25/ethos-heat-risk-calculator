@@ -18,6 +18,10 @@ export const useInputParametersStore = defineStore('inputParameters', {
     },
     environmental: {
       postcode: undefined as undefined | number,
+      isAirconAvailable: undefined as undefined | boolean,
+      isInsulationInstalled: undefined as undefined | boolean | null,
+      isOutsideOften: undefined as undefined | boolean,
+      outsideTimes: [] as ('morning' | 'midday' | 'evening' | 'night')[],
     },
     other: {
       healthConditions: [] as string[],

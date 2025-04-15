@@ -75,7 +75,7 @@ const getGreenSpaceMessage = () => {
     return 'Your area has very limited green space, which may contribute to higher urban heat island effects.'
   } else if (percentage < 10) {
     return 'Your area has below average green space coverage, which may moderately increase heat risk.'
-  } else if (percentage < 15) {
+  } else if (percentage < 20) {
     return 'Your area has a moderate amount of green space, providing some natural cooling.'
   } else {
     return 'Your area has abundant green space, which helps reduce urban heat island effects.'
