@@ -1,21 +1,13 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
-import { api } from 'src/boot/axios'
 import { AxiosError } from 'axios'
 import { TemperaturePredictor, type BiophysicalFeatures } from 'src/helpers/temperaturePrediction'
 import type { Geometry, FeatureCollection } from 'geojson'
+import { response } from '../mock/apiResponse'
 
 export const humidityValues = Array.from({ length: 11 }, (_, i) => i * 10) // [0, 10, ..., 100]
 export const temperatureValues = Array.from({ length: 12 }, (_, i) => i * 2 + 23) // [23, 25, ..., 45]
 
 // Define a type for the expected API response structure for better type safety
-interface GreenspaceApiResponse {
-  postcode: string
-  greenspace_percentage: number
-  greenspace_area_sqm: number
-  total_area_sqm: number
-  postcode_geometry: Geometry
-  greenspace_features: FeatureCollection
-}
 
 export const useOutputDataStore = defineStore('outputData', {
   persist: true,
@@ -77,22 +69,19 @@ export const useOutputDataStore = defineStore('outputData', {
       this.temperatureGrid = rows
     },
 
-    async makePythonServerRequest(postcode: number) {
+    mockPythonServerRequest() {
       // Reset previous data and set loading state
       this.resetGreenspaceData()
       this.isLoading = true
 
       try {
-        const url = `/api/greenspace?postcode=${postcode}`
-        const response = await api.get<GreenspaceApiResponse>(url)
+        this.postcode = parseInt(response.postcode, 10)
+        this.greenSpacePercentage = response.greenspace_percentage
+        this.greenSpaceArea = response.greenspace_area_sqm
+        this.totalArea = response.total_area_sqm
 
-        this.postcode = parseInt(response.data.postcode, 10)
-        this.greenSpacePercentage = response.data.greenspace_percentage
-        this.greenSpaceArea = response.data.greenspace_area_sqm
-        this.totalArea = response.data.total_area_sqm
-
-        this.postcodeGeometry = response.data.postcode_geometry
-        this.greenspaceFeatures = response.data.greenspace_features
+        this.postcodeGeometry = response.postcode_geometry
+        this.greenspaceFeatures = response.greenspace_features
 
         this.error = null
       } catch (error) {

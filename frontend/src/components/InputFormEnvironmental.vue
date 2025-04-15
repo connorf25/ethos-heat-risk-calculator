@@ -1,6 +1,8 @@
 <template>
   <!-- Postcode Input -->
+  Ability to search any postcode coming soon...
   <q-input
+    disable
     v-model.number="store.environmental.postcode"
     type="number"
     label="Postcode (Australia)"

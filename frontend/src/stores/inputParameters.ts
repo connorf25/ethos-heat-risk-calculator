@@ -17,7 +17,7 @@ export const useInputParametersStore = defineStore('inputParameters', {
       massLbs: undefined as undefined | number,
     },
     environmental: {
-      postcode: undefined as undefined | number,
+      postcode: 4101 as undefined | number,
       isAirconAvailable: undefined as undefined | boolean,
       isInsulationInstalled: undefined as undefined | boolean | null,
       isOutsideOften: undefined as undefined | boolean,

@@ -82,7 +82,7 @@ const getGreenSpaceMessage = () => {
   }
 }
 
-onMounted(async () => {
+onMounted(() => {
   const postcode = inputParametersStore.environmental.postcode
 
   if (postcode) {
@@ -90,7 +90,7 @@ onMounted(async () => {
     hasError.value = false
 
     try {
-      await outputDataStore.makePythonServerRequest(Number(postcode))
+      outputDataStore.mockPythonServerRequest()
     } catch (error) {
       console.error('Failed to fetch environmental data:', error)
       hasError.value = true
