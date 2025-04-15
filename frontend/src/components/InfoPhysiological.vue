@@ -20,8 +20,9 @@
     </div>
     <div class="q-mt-md" v-else-if="outputDataStore.temperatureGrid">
       <q-card class="map-card" flat bordered>
-        <q-card-section>
+        <q-card-section class="flex justify-between items-center">
           <div class="text-h6">Heat Risk Matrix</div>
+          <PrintButton targetId="heatmap-container"> Print Heatmap </PrintButton>
         </q-card-section>
 
         <q-separator />
@@ -40,6 +41,7 @@ import { useInputParametersStore } from 'src/stores/inputParameters'
 import { useOutputDataStore } from 'src/stores/outputData'
 import { ref, onMounted } from 'vue'
 import InfoPhysiologicalHeatMap from './InfoPhysiologicalHeatMap.vue'
+import PrintButton from './PrintButton.vue'
 
 const inputParametersStore = useInputParametersStore()
 const outputDataStore = useOutputDataStore()

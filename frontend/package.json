@@ -23,6 +23,7 @@
     "leaflet": "^1.9.4",
     "pinia": "^2.0.11",
     "pinia-plugin-persistedstate": "^4.2.0",
+    "print-js": "^1.6.0",
     "quasar": "^2.16.0",
     "vue": "^3.4.18",
     "vue-echarts": "^7.0.3",

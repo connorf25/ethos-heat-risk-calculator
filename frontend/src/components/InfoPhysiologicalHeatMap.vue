@@ -1,5 +1,5 @@
 <template>
-  <div class="heatmap-container">
+  <div id="heatmap-container" class="heatmap-container">
     <v-chart class="chart" :option="heatmapOption" autoresize />
   </div>
 </template>
@@ -75,7 +75,7 @@ const heatmapOption = computed(() => {
       top: '0%',
       left: '3%',
       right: '4%',
-      bottom: '15%',
+      bottom: '30%',
       containLabel: true,
     },
     xAxis: {
@@ -102,7 +102,7 @@ const heatmapOption = computed(() => {
       min: 0,
       max: 2,
       calculable: false,
-      orient: 'horizontal',
+      orient: 'vertical',
       left: 'center',
       pieces: [
         // Add piece for the special value (null/vapour pressure limit)
@@ -126,7 +126,7 @@ const heatmapOption = computed(() => {
         {
           type: 'text',
           left: 'center',
-          bottom: '5%',
+          bottom: '20%',
           style: {
             text: 'Estimated risk level',
             textAlign: 'center',
