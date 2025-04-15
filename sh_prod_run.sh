@@ -1,2 +1,2 @@
 docker compose --profile prod down
-docker compose --profile prod up --build
+docker compose --profile prod up --build -d
