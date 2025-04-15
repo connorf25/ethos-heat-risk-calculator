@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="heatmap-container">
-      <v-chart class="chart" :option="heatmapOption" autoresize />
+      <v-chart class="chart" :option="heatmapOption(false)" autoresize />
     </div>
     <div class="printable-area">
-      <v-chart ref="printableChartRef" class="chart" :option="heatmapOption" />
+      <v-chart ref="printableChartRef" class="chart" :option="heatmapOption(true)" />
     </div>
   </div>
 </template>
@@ -43,7 +43,7 @@ const printableChartRef = ref<InstanceType<typeof VChart> | null>(null)
 const VAPOUR_PRESSURE_LIMIT_VALUE = 999
 
 // Computed option for the heatmap
-const heatmapOption = computed(() => {
+const heatmapOption = computed(() => (isPrintVersion: boolean) => {
   if (!outputDataStore.temperatureGrid) {
     return {
       title: {
@@ -64,21 +64,23 @@ const heatmapOption = computed(() => {
   })
 
   return {
-    tooltip: {
-      position: 'top',
-      formatter: (params: { data: [number, number, number] }) => {
-        const temp = temperatureValues[params.data[0]]
-        const humidity = humidityValues[params.data[1]]
-        const value = params.data[2]
+    tooltip: isPrintVersion
+      ? undefined
+      : {
+          position: 'top',
+          formatter: (params: { data: [number, number, number] }) => {
+            const temp = temperatureValues[params.data[0]]
+            const humidity = humidityValues[params.data[1]]
+            const value = params.data[2]
 
-        if (value === VAPOUR_PRESSURE_LIMIT_VALUE) {
-          return `Temperature: ${temp}°C<br>Humidity: ${humidity}%<br>Exceeding vapour pressure limit`
-        } else {
-          const coreTemp = value.toFixed(2)
-          return `Temperature: ${temp}°C<br>Humidity: ${humidity}%<br>Increase in core body temperature from baseline: ${coreTemp}°C`
-        }
-      },
-    },
+            if (value === VAPOUR_PRESSURE_LIMIT_VALUE) {
+              return `Temperature: ${temp}°C<br>Humidity: ${humidity}%<br>Exceeding vapour pressure limit`
+            } else {
+              const coreTemp = value.toFixed(2)
+              return `Temperature: ${temp}°C<br>Humidity: ${humidity}%<br>Increase in core body temperature from baseline: ${coreTemp}°C`
+            }
+          },
+        },
     grid: {
       top: '0%',
       left: '3%',
@@ -115,14 +117,14 @@ const heatmapOption = computed(() => {
       pieces: [
         // Add piece for the special value (null/vapour pressure limit)
         {
-          value: VAPOUR_PRESSURE_LIMIT_VALUE, // Exact value match
-          color: '#000000', // Black color
-          label: 'Exceeding vapour pressure limit', // Legend label
+          value: VAPOUR_PRESSURE_LIMIT_VALUE,
+          color: isPrintVersion ? '#ebebeb' : '#000000',
+          label: 'Exceeding vapour pressure limit',
         },
         // Original risk level pieces
-        { min: -10, max: 0.8, color: '#00a854', label: 'Low risk (< 0.8°C)' }, // Green
-        { min: 0.8, max: 1.1, color: '#faad14', label: 'Medium risk (0.8-1.1°C)' }, // Yellow
-        { min: 1.1, max: 10, color: '#f5222d', label: 'High risk (> 1.1°C)' }, // Red - adjusted max slightly just in case
+        { min: -10, max: 0.8, color: '#00a854', label: 'Low risk (< 0.8°C)' },
+        { min: 0.8, max: 1.1, color: '#faad14', label: 'Medium risk (0.8-1.1°C)' },
+        { min: 1.1, max: 10, color: '#f5222d', label: 'High risk (> 1.1°C)' },
       ],
       textStyle: {
         color: '#333',
