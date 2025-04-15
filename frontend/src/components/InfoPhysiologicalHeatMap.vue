@@ -17,6 +17,7 @@ import {
 } from 'echarts/components'
 import VChart from 'vue-echarts'
 import { useOutputDataStore, temperatureValues, humidityValues } from 'src/stores/outputData'
+import printJS from 'print-js'
 
 // Register ECharts components
 use([
@@ -160,6 +161,24 @@ const heatmapOption = computed(() => {
       },
     ],
   }
+})
+
+const printWithLibrary = () => {
+  console.log('Printing heatmap...')
+  printJS({
+    printable: 'heatmap-container', // ID of the element to print
+    type: 'html', // Type of content
+    targetStyles: ['*'], // Attempt to include all styles
+    scanStyles: true, // Scan for computed styles
+    documentTitle: 'Ethos', // Title for the print job/document
+    header: 'Heat Risk Matrix', // Optional header text
+    style: '@page { size: A4 landscape; margin: 2cm; } .chart { width: 100% !important; }', // Inject custom print CSS
+    onError: (error) => console.error('Error printing:', error),
+  })
+}
+
+defineExpose({
+  printWithLibrary,
 })
 </script>
 

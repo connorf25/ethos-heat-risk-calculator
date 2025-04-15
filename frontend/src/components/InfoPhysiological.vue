@@ -22,13 +22,13 @@
       <q-card class="map-card" flat bordered>
         <q-card-section class="flex justify-between items-center">
           <div class="text-h6">Heat Risk Matrix</div>
-          <PrintButton targetId="heatmap-container"> Print Heatmap </PrintButton>
+          <q-btn @click="printHeatMap" color="positive">Print</q-btn>
         </q-card-section>
 
         <q-separator />
 
         <q-card-section class="q-pa-none q-mt-md relative-position">
-          <InfoPhysiologicalHeatMap />
+          <InfoPhysiologicalHeatMap ref="heatMapRef" />
         </q-card-section>
       </q-card>
     </div>
@@ -41,10 +41,11 @@ import { useInputParametersStore } from 'src/stores/inputParameters'
 import { useOutputDataStore } from 'src/stores/outputData'
 import { ref, onMounted } from 'vue'
 import InfoPhysiologicalHeatMap from './InfoPhysiologicalHeatMap.vue'
-import PrintButton from './PrintButton.vue'
 
 const inputParametersStore = useInputParametersStore()
 const outputDataStore = useOutputDataStore()
+
+const heatMapRef = ref<null | typeof InfoPhysiologicalHeatMap>(null)
 
 const isLoading = ref(true)
 const hasError = ref(false)
@@ -78,4 +79,12 @@ onMounted(async () => {
     isLoading.value = false
   }
 })
+
+const printHeatMap = () => {
+  if (heatMapRef.value) {
+    heatMapRef.value.printWithLibrary()
+  } else {
+    console.error('Error printing: HeatMapRef undefined!')
+  }
+}
 </script>
