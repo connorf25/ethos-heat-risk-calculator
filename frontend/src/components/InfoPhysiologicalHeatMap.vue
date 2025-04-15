@@ -118,7 +118,7 @@ const heatmapOption = computed(() => (isPrintVersion: boolean) => {
         // Add piece for the special value (null/vapour pressure limit)
         {
           value: VAPOUR_PRESSURE_LIMIT_VALUE,
-          color: isPrintVersion ? '#ebebeb' : '#000000',
+          color: isPrintVersion ? '#fff' : '#000000',
           label: 'Exceeding vapour pressure limit',
         },
         // Original risk level pieces
