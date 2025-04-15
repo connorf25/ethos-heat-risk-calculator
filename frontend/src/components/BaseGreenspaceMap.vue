@@ -180,6 +180,9 @@ const onMapReady = () => {
   // Invalidate size once the map object is ready, in case container size was calculated late
   void nextTick(() => {
     invalidateMapSize()
+    setTimeout(() => {
+      fitMapToBounds()
+    }, 1000)
   })
 }
 
@@ -194,7 +197,7 @@ watch(
         setTimeout(() => {
           console.log('Attempting to fit bounds after geometry change...')
           fitMapToBounds()
-        }, 100) // 100ms delay - adjust if needed, or remove if nextTick is sufficient
+        }, 50)
       })
     } else if (mapReady && !newGeometry && oldGeometry) {
       // Geometry was removed, reset view
