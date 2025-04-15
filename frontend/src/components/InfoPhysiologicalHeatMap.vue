@@ -1,11 +1,16 @@
 <template>
-  <div id="heatmap-container" class="heatmap-container">
-    <v-chart class="chart" :option="heatmapOption" autoresize />
+  <div>
+    <div class="heatmap-container">
+      <v-chart class="chart" :option="heatmapOption" autoresize />
+    </div>
+    <div class="printable-area">
+      <v-chart ref="printableChartRef" class="chart" :option="heatmapOption" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, nextTick } from 'vue'
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { HeatmapChart } from 'echarts/charts'
@@ -31,6 +36,8 @@ use([
 
 // Access the store
 const outputDataStore = useOutputDataStore()
+
+const printableChartRef = ref<InstanceType<typeof VChart> | null>(null)
 
 // Define a special value for null/vapour pressure limit exceeded
 const VAPOUR_PRESSURE_LIMIT_VALUE = 999
@@ -163,18 +170,38 @@ const heatmapOption = computed(() => {
   }
 })
 
-const printWithLibrary = () => {
-  console.log('Printing heatmap...')
-  printJS({
-    printable: 'heatmap-container', // ID of the element to print
-    type: 'html', // Type of content
-    targetStyles: ['*'], // Attempt to include all styles
-    scanStyles: true, // Scan for computed styles
-    documentTitle: 'Ethos', // Title for the print job/document
-    header: 'Heat Risk Matrix', // Optional header text
-    style: '@page { size: A4 landscape; margin: 2cm; } .chart { width: 100% !important; }', // Inject custom print CSS
-    onError: (error) => console.error('Error printing:', error),
-  })
+const printWithLibrary = async () => {
+  console.log('Printing heatmap via image...')
+  const chartInstance = printableChartRef.value
+
+  if (!chartInstance) {
+    console.error('Printable chart instance not found or not ready.')
+    return
+  }
+
+  // Ensure the chart has had a chance to render, especially if data changed recently
+  await nextTick()
+
+  try {
+    // Get the chart as a base64 image URL
+    const imageUrl = chartInstance.getConnectedDataURL({
+      type: 'png',
+      pixelRatio: 2,
+      backgroundColor: '#fff',
+    })
+
+    // Print the image using printJS
+    printJS({
+      printable: imageUrl,
+      type: 'image',
+      header: 'Heat Risk Matrix',
+      documentTitle: 'Ethos',
+      imageStyle: 'width:100%; margin: 0 auto;',
+      onError: (error) => console.error('Error printing image:', error),
+    })
+  } catch (error) {
+    console.error('Error generating or printing chart image:', error)
+  }
 }
 
 defineExpose({
@@ -186,9 +213,18 @@ defineExpose({
 .heatmap-container {
   width: 100%;
   height: 500px;
+  /* Make sure the visible one doesn't overlap if needed */
+  position: relative;
+  z-index: 1;
 }
 .chart {
   width: 100%;
   height: 100%;
+}
+.printable-area {
+  width: 500px;
+  height: 500px;
+  position: absolute;
+  opacity: 0;
 }
 </style>
