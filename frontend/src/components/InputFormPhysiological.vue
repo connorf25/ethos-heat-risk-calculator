@@ -24,7 +24,7 @@
 
     <!-- Height Input -->
     <div class="row q-mb-md">
-      <div v-if="store.physiological.isHeightCm" class="col-10 q-pr-lg">
+      <div v-if="store.physiological.isHeightCm" class="col-xs-8 col-sm-10 q-pr-lg">
         <q-input
           v-model.number="store.physiological.heightCm"
           type="number"
@@ -77,7 +77,7 @@
 
     <!-- Mass Input -->
     <div class="q-mb-md row">
-      <div class="col-10 q-pr-lg">
+      <div class="col-xs-8 col-sm-10 q-pr-lg">
         <q-input
           v-model.number="store.physiological.massKg"
           v-if="store.physiological.isMassKg"
