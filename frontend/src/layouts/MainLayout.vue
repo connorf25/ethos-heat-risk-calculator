@@ -4,7 +4,6 @@
       <q-toolbar>
         <img src="ethos.svg" height="40" class="q-mr-sm" />
         <q-toolbar-title> Heat Risk Calculator </q-toolbar-title>
-        <q-space />
         <q-btn
           v-if="$route.path !== '/'"
           @click="$router.push('/')"
