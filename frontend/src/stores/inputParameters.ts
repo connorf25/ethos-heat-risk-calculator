@@ -1,4 +1,7 @@
+// src/stores/inputParameters.ts
 import { defineStore, acceptHMRUpdate } from 'pinia'
+
+export type TimePeriod = 'morning' | 'mid-morning' | 'midday' | 'afternoon' | 'night'
 
 export const useInputParametersStore = defineStore('inputParameters', {
   persist: true,
@@ -6,12 +9,10 @@ export const useInputParametersStore = defineStore('inputParameters', {
     physiological: {
       isFemale: undefined as undefined | boolean,
       age: undefined as undefined | number,
-      // Height
       isHeightCm: true,
       heightCm: undefined as undefined | number,
       heightFt: undefined as undefined | number,
       heightIn: undefined as undefined | number,
-      // Mass
       isMassKg: true,
       massKg: undefined as undefined | number,
       massLbs: undefined as undefined | number,
@@ -21,7 +22,7 @@ export const useInputParametersStore = defineStore('inputParameters', {
       isAirconAvailable: undefined as undefined | boolean,
       isInsulationInstalled: undefined as undefined | boolean | null,
       isOutsideOften: undefined as undefined | boolean,
-      outsideTimes: [] as ('morning' | 'midday' | 'evening' | 'night')[],
+      outsideTimes: [] as TimePeriod[],
     },
     other: {
       healthConditions: [] as string[],
@@ -39,10 +40,27 @@ export const useInputParametersStore = defineStore('inputParameters', {
       )
     },
     isEnvironmentalComplete(state): boolean {
-      return (
+      const postcodeValid =
         state.environmental.postcode !== undefined &&
         state.environmental.postcode >= 200 &&
         state.environmental.postcode <= 9944
+
+      const airconAnswered = state.environmental.isAirconAvailable !== undefined
+      const insulationAnswered = state.environmental.isInsulationInstalled !== undefined
+      const outsideOftenAnswered = state.environmental.isOutsideOften !== undefined
+
+      let outsideTimesValid = true
+      if (state.environmental.isOutsideOften === true) {
+        // If they go outside often, at least one time period must be selected
+        outsideTimesValid = state.environmental.outsideTimes.length > 0
+      }
+
+      return (
+        postcodeValid &&
+        airconAnswered &&
+        insulationAnswered &&
+        outsideOftenAnswered &&
+        outsideTimesValid
       )
     },
     isOtherComplete(state): boolean {
